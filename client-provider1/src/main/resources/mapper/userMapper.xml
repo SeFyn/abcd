@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.kgc.mapper.UserMapper">
+
+    <select id="selectUser" resultType="User" parameterType="User">
+        select * from `user`
+        <where>
+            <if test="username!=null">
+                username=#{username}
+            </if>
+            <if test="password!=null">
+                password=#{password}
+            </if>
+        </where>
+    </select>
+    <insert id="insertUser" parameterType="User" >
+            insert  into `user` (username, password, realname) VALUES (#{username},#{password},#{realname} where id=#{id})
+
+    </insert>
+    <update id="updateUser" parameterType="User">
+        update user <set>
+        <if test="username!=null">
+            username=#{username},
+        </if>
+        <if test="password!=null">
+            password=#{password},
+        </if>
+        <if test="realname!=null">
+            realname=#{realname},
+        </if>
+    </set>
+    <where>
+        <if test="id!=null">
+            id=#{id}
+        </if>
+    </where>
+    </update>
+    <delete id="deleteUser" parameterType="User">
+        delete from user <where>
+        <if test="username!=username">
+          and  username=#{username}
+        </if>
+        <if test="password!=null">
+            and password=#{password}
+        </if>
+        <if test="id!=null">
+            and id=#{id}
+        </if>
+    </where>
+    </delete>
+
+
+    <select id="selectUserSale" parameterType="User" resultMap="userSale">
+            select s.*,u.username,p.productname
+            from sale s,user u,product p
+            where s.userid=u.id and s.productid=p.id
+            <if test="id!=null">
+                and  u.id=#{id}
+            </if>
+
+
+
+    </select>
+    <resultMap id="userSale" type="User">
+<id property="id" column="userid"/>
+        <result property="username" column="username"/>
+        <result property="realname" column="realname"/>
+        <collection property="listsale" ofType="Sale">
+            <id property="id" column="ID"/>
+            <result property="price" column="PRICE"/>
+            <result property="quantity" column="QUANTITY"/>
+            <result property="saledate" column="SALEDATE"/>
+            <result property="userid" column="USERID"/>
+            <result property="productid" column="PRODUCTID"/>
+
+            <association property="product" column="PRODUCTID" javaType="Product">
+                <id property="id" column="PRODUCTID"/>
+                <result property="productname" column="PRODUCTNAME"/>
+            </association>
+        </collection>
+    </resultMap>
+
+
+
+</mapper>

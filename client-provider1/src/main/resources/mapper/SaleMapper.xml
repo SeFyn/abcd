@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.kgc.mapper.SaleMapper">
+
+    <insert id="insertSale" parameterType="Sale">
+        insert into sale (price, quantity, saledate, userid, productid) values(#{price}, #{quantity},now(), #{userid}, #{productid})
+    </insert>
+
+
+
+    <select id="selectSale" parameterType="Sale" resultMap="salemap">
+        select s.*,u.realname,p.productname
+        from sale s,product p,`user` u
+        where
+        s.userid=u.id and s.productid=p.id
+        <choose>
+            <when test="saledate!=null">
+                order by s.saledate desc
+            </when>
+            <otherwise>
+                order by s.price desc
+            </otherwise>
+        </choose>
+    </select>
+    <resultMap id="salemap" type="Sale">
+        <id property="id" column="ID"/>
+        <result property="price" column="PRICE"/>
+        <result property="quantity" column="QUANTITY"/>
+        <result property="saledate" column="SALEDATE"/>
+        <result property="userid" column="USERID"/>
+        <result property="productid" column="PRODUCTID"/>
+
+        <association property="user" column="USERID" javaType="User">
+            <id property="id" column="USERID"/>
+            <result property="realname" column="REALNAME"/>
+        </association>
+        <association property="product" column="PRODUCTID" javaType="Product">
+            <id property="id" column="PRODUCTID"/>
+            <result property="productname" column="PRODUCTNAME"/>
+        </association>
+    </resultMap>
+</mapper>
